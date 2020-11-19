@@ -8,7 +8,7 @@ def hashJoin(data1, index1, data2, index2):
         h[s[index1]].append(s)
     return [(s, r) for r in table2 for s in h[r[index2]]]
 
-with open(os.path.join(os.path.dirname(__file__), 'title.basics.full.tsv'),encoding='utf8') as basics, open(os.path.join(os.path.dirname(__file__), 'title.ratings.full.tsv'),encoding='utf8') as ratings:
+with open(os.path.join(os.path.dirname(__file__), 'title.basics.tsv'),encoding='utf8') as basics, open(os.path.join(os.path.dirname(__file__), 'title.ratings.tsv'),encoding='utf8') as ratings:
     table1 = []
     table2 = []
     print("reading ratings")
