@@ -1,30 +1,31 @@
 import csv
 import os
-with open(os.path.join(os.path.dirname(__file__), 'all_videos.tsv'), 'w', newline='',encoding='utf8') as result:
-    writer = csv.writer(result, delimiter ='\t')
-    with open(os.path.join(os.path.dirname(__file__), 'title.basics.tsv'),encoding='utf8') as basics, open(os.path.join(os.path.dirname(__file__), 'title.ratings.tsv'),encoding='utf8') as ratings:
-        list = basics.readline().split('\t')
-        list[len(list)-1] = list[len(list)-1].replace('\n', '')
-        list = list + ratings.readline().split('\t')
-        del list[len(list)- len(ratings.readline().split('\t'))]
-        list[len(list)-1] = list[len(list)-1].replace('\n', '')
-        writer.writerow(list)
-        
-    with open(os.path.join(os.path.dirname(__file__), 'title.basics.tsv'),encoding='utf8') as basics,  open(os.path.join(os.path.dirname(__file__), 'title.ratings.tsv'),encoding='utf8') as ratings:
-        paired = []
-        lines_ratings=ratings.readlines()
-        basics.readline()
-        for line_basics in basics:
-            ratings.readline()
-            print(len(lines_ratings))
-            for x in range(len(lines_ratings)):
-                if line_basics.split('\t')[0] == lines_ratings[x].split('\t')[0]  and line_basics.split('\t')[0]:
-                    tmp_list = line_basics.split('\t')
-                    tmp_list[len(tmp_list)-1] = tmp_list[len(tmp_list)-1].replace('\n', '')
-                    tmp_list = tmp_list + lines_ratings[x].split('\t')
-                    del tmp_list[len(tmp_list)- len(lines_ratings[x].split('\t'))]
-                    tmp_list[len(tmp_list)-1] = tmp_list[len(tmp_list)-1].replace('\n', '')
-                    writer.writerow(tmp_list)
-                    del lines_ratings[x]
-                    break
-            ratings.seek(0)
+from collections import defaultdict
+
+def hashJoin(data1, index1, data2, index2):
+    h=defaultdict(list)
+    for s in table1:
+        h[s[index1]].append(s)
+    return [(s, r) for r in table2 for s in h[r[index2]]]
+
+with open(os.path.join(os.path.dirname(__file__), 'title.basics.full.tsv'),encoding='utf8') as basics, open(os.path.join(os.path.dirname(__file__), 'title.ratings.full.tsv'),encoding='utf8') as ratings:
+    table1 = []
+    table2 = []
+    print("reading ratings")
+    for ratings_line in ratings:
+        table1.append(([ratings_line.split('\t')[1], ratings_line.split('\t')[2].strip('\n')],ratings_line.split('\t')[0]))
+    print("ratings done")
+    print("reading basics")
+    for basics_line in basics:
+        table2.append((basics_line.split('\t')[0],[basics_line.split('\t')[1],basics_line.split('\t')[2],basics_line.split('\t')[3],basics_line.split('\t')[4],basics_line.split('\t')[5],basics_line.split('\t')[6],basics_line.split('\t')[7], basics_line.split('\t')[8].strip('\n')]))
+    print("basics done")   
+    with open(os.path.join(os.path.dirname(__file__), 'all_videos.tsv'), 'w', newline='',encoding='utf8') as result:
+        writer = csv.writer(result, delimiter ='\t')
+        basics.seek(0)
+        ratings.seek(0)
+        result_row=[]
+        print("merging two datasets and writing them to 'all_videos.tsv'")
+        for row in hashJoin(table1, 1, table2, 0):
+            writer.writerow([row[0][1]]+row[1][1]+row[0][0])
+        print("all done")
+            
