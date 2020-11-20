@@ -12,7 +12,6 @@ with open(os.path.join(os.path.dirname(__file__), 'movie_rating_by_year.tsv'), '
                 found = False
                 for result_element in range(len(result_list)):
                     if videos_line.split('\t')[5] == result_list[result_element][0]:
-                        print(videos_line.split('\t')[5])
                         result_list[result_element][1]=(float(result_list[result_element][1]) * float(result_list[result_element][2]) + float(videos_line.split('\t')[9]))/(float(result_list[result_element][2])+1.0)
                         result_list[result_element][2] = result_list[result_element][2] + 1
                         found = True
