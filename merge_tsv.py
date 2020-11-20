@@ -4,9 +4,9 @@ from collections import defaultdict
 
 def hashJoin(data1, index1, data2, index2):
     h=defaultdict(list)
-    for s in table1:
+    for s in data1:
         h[s[index1]].append(s)
-    return [(s, r) for r in table2 for s in h[r[index2]]]
+    return [(s, r) for r in data2 for s in h[r[index2]]]
 
 with open(os.path.join(os.path.dirname(__file__), 'title.basics.tsv'),encoding='utf8') as basics, open(os.path.join(os.path.dirname(__file__), 'title.ratings.tsv'),encoding='utf8') as ratings:
     table1 = []
